@@ -28,9 +28,9 @@ class FortifyServiceProvider extends ServiceProvider
                     $user = auth()->user();
                     
                     if ($user->hasRole('admin')) {
-                        return redirect()->intended('/dashboard');
+                        return redirect()->intended(route('admin.dashboard'));
                     } elseif ($user->hasRole('petani')) {
-                        return redirect()->intended('/dashboard');
+                        return redirect()->intended(route('petani.dashboard'));
                     }
                     
                     // Default redirect for 'user' role
@@ -47,9 +47,9 @@ class FortifyServiceProvider extends ServiceProvider
                     $user = auth()->user();
                     
                     if ($user->hasRole('admin')) {
-                        return redirect('/dashboard');
+                        return redirect(route('admin.dashboard'));
                     } elseif ($user->hasRole('petani')) {
-                        return redirect('/dashboard');
+                        return redirect(route('petani.dashboard'));
                     }
                     
                     // Default redirect for 'user' role

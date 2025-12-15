@@ -1,5 +1,7 @@
 <?php
 
+use App\Livewire\Admin\Dashboard as DashboardAdmin;
+use App\Livewire\Petani\Dashboard as DashboardPetani;
 use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
@@ -18,16 +20,24 @@ Route::get('/products', Product::class)->name('products');
 Route::view('/about', 'welcome')->name('about');
 Route::view('/contact', 'welcome')->name('contact');
 
-// Auth Routes
-Route::middleware(['auth'])->group(function () {
+// User Routes
+Route::middleware(['auth', 'role:user'])->group(function () {
     Route::get('/cart', Cart::class)->name('cart');
     Route::view('/orders', 'welcome')->name('orders');
     Route::view('/profile', 'welcome')->name('profile');
 });
 
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+// Admin Routes
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', DashboardAdmin::class)->name('dashboard');
+});
+
+// Petani Routes
+Route::middleware(['auth', 'role:petani'])->prefix('petani')->name('petani.')->group(function () {
+    Route::get('/dashboard', DashboardPetani::class)->name('dashboard');
+});
+
+
 
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
