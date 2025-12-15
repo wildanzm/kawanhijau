@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Fortify;
+use Laravel\Fortify\Contracts\LoginResponse;
+use Laravel\Fortify\Contracts\RegisterResponse;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -18,7 +20,43 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Custom redirect after login based on user role
+        $this->app->singleton(LoginResponse::class, function () {
+            return new class implements LoginResponse {
+                public function toResponse($request)
+                {
+                    $user = auth()->user();
+                    
+                    if ($user->hasRole('admin')) {
+                        return redirect()->intended('/dashboard');
+                    } elseif ($user->hasRole('petani')) {
+                        return redirect()->intended('/dashboard');
+                    }
+                    
+                    // Default redirect for 'user' role
+                    return redirect()->intended('/');
+                }
+            };
+        });
+
+        // Custom redirect after registration based on user role
+        $this->app->singleton(RegisterResponse::class, function () {
+            return new class implements RegisterResponse {
+                public function toResponse($request)
+                {
+                    $user = auth()->user();
+                    
+                    if ($user->hasRole('admin')) {
+                        return redirect('/dashboard');
+                    } elseif ($user->hasRole('petani')) {
+                        return redirect('/dashboard');
+                    }
+                    
+                    // Default redirect for 'user' role
+                    return redirect('/');
+                }
+            };
+        });
     }
 
     /**

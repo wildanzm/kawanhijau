@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\PetaniProfile;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
@@ -18,29 +19,59 @@ class UserRoleSeeder extends Seeder
     {
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        $roleAdmin = Role::create(['name' => 'admin']);
-        $roleFarmer = Role::create(['name' => 'farmer']);
-        $roleUser = Role::create(['name' => 'user']);
+        // Create roles
+        $roleAdmin = Role::firstOrCreate(['name' => 'admin']);
+        $rolePetani = Role::firstOrCreate(['name' => 'petani']);
+        $roleUser = Role::firstOrCreate(['name' => 'user']);
 
-        $admin = User::create([
-            'name' => 'Administrator',
-            'email' => 'admin@gmail.com',
-            'password' => Hash::make('password123')
-        ]);
-        $admin->assignRole($roleAdmin);
+        // Create admin user
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@gmail.com'],
+            [
+                'name' => 'Administrator',
+                'password' => Hash::make('password123')
+            ]
+        );
+        if (!$admin->hasRole('admin')) {
+            $admin->assignRole($roleAdmin);
+        }
 
-        $farmer = User::create([
-            'name' => 'Petani',
-            'email' => 'petani@gmail.com',
-            'password' => Hash::make('password123')
-        ]);
-        $farmer->assignRole($roleFarmer);
+        // Create petani user
+        $petani = User::firstOrCreate(
+            ['email' => 'petani@gmail.com'],
+            [
+                'name' => 'Petani',
+                'password' => Hash::make('password123')
+            ]
+        );
+        if (!$petani->hasRole('petani')) {
+            $petani->assignRole($rolePetani);
+        }
+        
+        // Create petani profile if not exists
+        if (!$petani->petaniProfile) {
+            PetaniProfile::create([
+                'user_id' => $petani->id,
+                'phone_number' => '081234567890',
+                'address' => 'Jl. Pertanian Organik No. 123, Bandung',
+                'city' => 'Bandung',
+                'farm_size' => 5.5,
+                'farming_experience' => 'experienced',
+                'verification_status' => 'approved',
+                'bio' => 'Petani organik dengan pengalaman lebih dari 10 tahun',
+            ]);
+        }
 
-        $user = User::create([
-            'name' => 'User',
-            'email' => 'user@gmail.com',
-            'password' => Hash::make('password123')
-        ]);
-        $user->assignRole($roleUser);
+        // Create regular user
+        $user = User::firstOrCreate(
+            ['email' => 'user@gmail.com'],
+            [
+                'name' => 'User',
+                'password' => Hash::make('password123')
+            ]
+        );
+        if (!$user->hasRole('user')) {
+            $user->assignRole($roleUser);
+        }
     }
 }

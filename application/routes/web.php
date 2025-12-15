@@ -4,12 +4,26 @@ use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
 use App\Livewire\Settings\TwoFactor;
+use App\Livewire\User\Cart;
+use App\Livewire\User\Home;
+use App\Livewire\User\Product;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+// Public Routes
+Route::get('/', Home::class)->name('home');
+
+// Placeholder routes (to be implemented)
+Route::get('/products', Product::class)->name('products');
+Route::view('/about', 'welcome')->name('about');
+Route::view('/contact', 'welcome')->name('contact');
+
+// Auth Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/cart', Cart::class)->name('cart');
+    Route::view('/orders', 'welcome')->name('orders');
+    Route::view('/profile', 'welcome')->name('profile');
+});
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])

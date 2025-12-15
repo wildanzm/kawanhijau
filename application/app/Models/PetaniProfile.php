@@ -13,7 +13,9 @@ class PetaniProfile extends Model
         'city',
         'phone_number',
         'verification_status',
-        'bio'
+        'bio',
+        'farm_size',
+        'farming_experience',
     ];
 
     public function user()
