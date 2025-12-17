@@ -200,7 +200,7 @@
                         </p>
                     </div>
 
-                    <a href=""
+                    <a href="{{ route('petani.products') }}"
                         class="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group {{ $activeMenu === 'products' ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-md' : 'text-zinc-700 hover:bg-zinc-100' }}">
                         <svg class="w-5 h-5 {{ $activeMenu === 'products' ? 'text-white' : 'text-zinc-600 group-hover:text-primary-600' }}"
                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -210,7 +210,7 @@
                         <span class="font-medium text-sm">Produk Saya</span>
                     </a>
 
-                    <a href=""
+                    <a href="{{ route('petani.orders') }}"
                         class="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group {{ $activeMenu === 'orders' ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-md' : 'text-zinc-700 hover:bg-zinc-100' }}">
                         <svg class="w-5 h-5 {{ $activeMenu === 'orders' ? 'text-white' : 'text-zinc-600 group-hover:text-primary-600' }}"
                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -220,7 +220,7 @@
                         <span class="font-medium text-sm">Pesanan Masuk</span>
                     </a>
 
-                    <a href=""
+                    <a href="{{ route('petani.sales') }}"
                         class="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group {{ $activeMenu === 'sales' ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-md' : 'text-zinc-700 hover:bg-zinc-100' }}">
                         <svg class="w-5 h-5 {{ $activeMenu === 'sales' ? 'text-white' : 'text-zinc-600 group-hover:text-primary-600' }}"
                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -230,7 +230,7 @@
                         <span class="font-medium text-sm">Penjualan</span>
                     </a>
 
-                    <a href=""
+                    <a href="{{ route('petani.profile') }}"
                         class="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group {{ $activeMenu === 'profile' ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-md' : 'text-zinc-700 hover:bg-zinc-100' }}">
                         <svg class="w-5 h-5 {{ $activeMenu === 'profile' ? 'text-white' : 'text-zinc-600 group-hover:text-primary-600' }}"
                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -247,7 +247,7 @@
                 </div>
 
                 <!-- Settings - Common -->
-                <a href=""
+                <a href="{{ auth()->user()->hasRole('admin') ? route('admin.settings') : route('petani.settings') }}"
                     class="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group {{ $activeMenu === 'settings' ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-md' : 'text-zinc-700 hover:bg-zinc-100' }}">
                     <svg class="w-5 h-5 {{ $activeMenu === 'settings' ? 'text-white' : 'text-zinc-600 group-hover:text-primary-600' }}"
                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
