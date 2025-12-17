@@ -1,16 +1,22 @@
 <?php
 
-use App\Livewire\Admin\Dashboard as DashboardAdmin;
-use App\Livewire\Petani\Dashboard as DashboardPetani;
-use App\Livewire\Settings\Appearance;
-use App\Livewire\Settings\Password;
-use App\Livewire\Settings\Profile;
-use App\Livewire\Settings\TwoFactor;
+use App\Livewire\Admin\Category;
 use App\Livewire\User\Cart;
 use App\Livewire\User\Home;
-use App\Livewire\User\Product;
-use Illuminate\Support\Facades\Route;
+use App\Livewire\Admin\User;
 use Laravel\Fortify\Features;
+use App\Livewire\User\Product;
+use App\Livewire\Admin\Setting as SettingAdmin;
+use App\Livewire\Admin\Product as ProductAdmin;
+use App\Livewire\Admin\Order as OrderAdmin;
+use App\Livewire\Settings\Profile;
+use App\Livewire\Settings\Password;
+use App\Livewire\Settings\TwoFactor;
+use App\Livewire\Settings\Appearance;
+use Illuminate\Support\Facades\Route;
+use App\Livewire\Admin\Dashboard as DashboardAdmin;
+use App\Livewire\Petani\Dashboard as DashboardPetani;
+use App\Models\Order;
 
 // Public Routes
 Route::get('/', Home::class)->name('home');
@@ -30,6 +36,11 @@ Route::middleware(['auth', 'role:user'])->group(function () {
 // Admin Routes
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', DashboardAdmin::class)->name('dashboard');
+    Route::get('/users', User::class)->name('users');
+    Route::get('/category', Category::class)->name('categories');
+    Route::get('/products', ProductAdmin::class)->name('products');
+    Route::get('/order', OrderAdmin::class)->name('orders');
+    Route::get('/settings', SettingAdmin::class)->name('settings');
 });
 
 // Petani Routes

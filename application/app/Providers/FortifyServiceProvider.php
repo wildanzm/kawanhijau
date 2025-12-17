@@ -2,14 +2,15 @@
 
 namespace App\Providers;
 
-use App\Actions\Fortify\CreateNewUser;
-use App\Actions\Fortify\ResetUserPassword;
-use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 use Laravel\Fortify\Fortify;
+use Illuminate\Support\Facades\Auth;
+use App\Actions\Fortify\CreateNewUser;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Cache\RateLimiting\Limit;
+use App\Actions\Fortify\ResetUserPassword;
+use Illuminate\Support\Facades\RateLimiter;
 use Laravel\Fortify\Contracts\LoginResponse;
 use Laravel\Fortify\Contracts\RegisterResponse;
 
@@ -25,7 +26,7 @@ class FortifyServiceProvider extends ServiceProvider
             return new class implements LoginResponse {
                 public function toResponse($request)
                 {
-                    $user = auth()->user();
+                    $user = Auth::user();
                     
                     if ($user->hasRole('admin')) {
                         return redirect()->intended(route('admin.dashboard'));
@@ -44,7 +45,7 @@ class FortifyServiceProvider extends ServiceProvider
             return new class implements RegisterResponse {
                 public function toResponse($request)
                 {
-                    $user = auth()->user();
+                    $user = Auth::user();
                     
                     if ($user->hasRole('admin')) {
                         return redirect(route('admin.dashboard'));

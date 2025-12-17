@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('payment_proofs', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('order_id')->constrained()->onDelete('cascade');
+            $table->string('image_path');
+            $table->boolean('is_verified')->default(false);
             $table->timestamps();
         });
     }
