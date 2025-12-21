@@ -52,6 +52,7 @@ class UserRoleSeeder extends Seeder
         if (!$petani->petaniProfile) {
             PetaniProfile::create([
                 'user_id' => $petani->id,
+                'farm_name' => 'Tani Makmur',
                 'phone_number' => '081234567890',
                 'address' => 'Jl. Pertanian Organik No. 123, Bandung',
                 'city' => 'Bandung',
