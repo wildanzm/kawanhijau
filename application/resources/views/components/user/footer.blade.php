@@ -20,9 +20,9 @@
                             class="text-sm text-zinc-600 hover:text-primary-600 transition-colors">Beranda</a></li>
                     <li><a href="{{ route('products') }}"
                             class="text-sm text-zinc-600 hover:text-primary-600 transition-colors">Produk</a></li>
-                    <li><a href="{{ route('about') }}"
+                    <li><a href=""
                             class="text-sm text-zinc-600 hover:text-primary-600 transition-colors">Tentang Kami</a></li>
-                    <li><a href="{{ route('contact') }}"
+                    <li><a href=""
                             class="text-sm text-zinc-600 hover:text-primary-600 transition-colors">Kontak</a></li>
                 </ul>
             </div>

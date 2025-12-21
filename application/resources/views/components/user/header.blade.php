@@ -28,11 +28,11 @@
                     class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('products*') ? 'text-primary-600 bg-primary-50' : 'text-zinc-700 hover:text-primary-600 hover:bg-zinc-100' }}">
                     Produk
                 </a>
-                <a href="{{ route('about') }}"
+                <a href="#"
                     class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('about') ? 'text-primary-600 bg-primary-50' : 'text-zinc-700 hover:text-primary-600 hover:bg-zinc-100' }}">
                     Tentang
                 </a>
-                <a href="{{ route('contact') }}"
+                <a href="#"
                     class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 {{ request()->routeIs('contact') ? 'text-primary-600 bg-primary-50' : 'text-zinc-700 hover:text-primary-600 hover:bg-zinc-100' }}">
                     Kontak
                 </a>
@@ -269,7 +269,7 @@
         @endauth
 
         <!-- About -->
-        <a href="{{ route('about') }}"
+        <a href="#"
             class="flex flex-col items-center justify-center py-2 px-3 rounded-lg transition-all duration-200 {{ request()->routeIs('about') ? 'text-primary-600 bg-primary-50' : 'text-zinc-600 hover:text-primary-600 hover:bg-zinc-50' }}">
             <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

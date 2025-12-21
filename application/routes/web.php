@@ -1,41 +1,39 @@
 <?php
 
-use App\Livewire\Admin\Category;
 use App\Livewire\User\Cart;
 use App\Livewire\User\Home;
 use App\Livewire\Admin\User;
-use Laravel\Fortify\Features;
+use App\Livewire\User\Order;
 use App\Livewire\User\Product;
-use App\Livewire\Admin\Setting as SettingAdmin;
-use App\Livewire\Admin\Product as ProductAdmin;
-use App\Livewire\Admin\Order as OrderAdmin;
-use App\Livewire\Admin\Dashboard as DashboardAdmin;
-use App\Livewire\Settings\Profile;
-use App\Livewire\Settings\Password;
-use App\Livewire\Settings\TwoFactor;
-use App\Livewire\Settings\Appearance;
+use App\Livewire\User\Product\Detail as DetailProduct;
+use App\Livewire\User\Profile;
+use App\Livewire\Admin\Category;
 use Illuminate\Support\Facades\Route;
-use App\Livewire\Petani\Dashboard as DashboardPetani;
-use App\Livewire\Petani\Product as ProductPetani;
-use App\Livewire\Petani\Order as OrderPetani;
+use App\Livewire\Admin\Order as OrderAdmin;
 use App\Livewire\Petani\Sale as SalePetani;
+use App\Livewire\Petani\Order as OrderPetani;
+use App\Livewire\Admin\Product as ProductAdmin;
+use App\Livewire\Admin\Setting as SettingAdmin;
+use App\Livewire\Petani\Product as ProductPetani;
 use App\Livewire\Petani\Profile as ProfilePetani;
 use App\Livewire\Petani\Setting as SettingPetani;
-use App\Models\Order;
+use App\Livewire\Admin\Dashboard as DashboardAdmin;
+use App\Livewire\Petani\Dashboard as DashboardPetani;
+use App\Livewire\User\Checkout;
 
 // Public Routes
 Route::get('/', Home::class)->name('home');
 
 // Placeholder routes (to be implemented)
-Route::get('/products', Product::class)->name('products');
-Route::view('/about', 'welcome')->name('about');
-Route::view('/contact', 'welcome')->name('contact');
 
 // User Routes
 Route::middleware(['auth', 'role:user'])->group(function () {
     Route::get('/cart', Cart::class)->name('cart');
-    Route::view('/orders', 'welcome')->name('orders');
-    Route::view('/profile', 'welcome')->name('profile');
+    Route::get('/checkout', Checkout::class)->name('checkout');
+    Route::get('/orders', Order::class)->name('orders');
+    Route::get('/profile', Profile::class)->name('profile');
+    Route::get('/products', Product::class)->name('products');
+    Route::get('/products/{id}', DetailProduct::class)->name('product.detail');
 });
 
 // Admin Routes
@@ -56,25 +54,4 @@ Route::middleware(['auth', 'role:petani'])->prefix('petani')->name('petani.')->g
     Route::get('sales', SalePetani::class)->name('sales');
     Route::get('profile', ProfilePetani::class)->name('profile');
     Route::get('settings', SettingPetani::class)->name('settings');
-});
-
-
-
-Route::middleware(['auth'])->group(function () {
-    Route::redirect('settings', 'settings/profile');
-
-    Route::get('settings/profile', Profile::class)->name('profile.edit');
-    Route::get('settings/password', Password::class)->name('user-password.edit');
-    Route::get('settings/appearance', Appearance::class)->name('appearance.edit');
-
-    Route::get('settings/two-factor', TwoFactor::class)
-        ->middleware(
-            when(
-                Features::canManageTwoFactorAuthentication()
-                    && Features::optionEnabled(Features::twoFactorAuthentication(), 'confirmPassword'),
-                ['password.confirm'],
-                [],
-            ),
-        )
-        ->name('two-factor.show');
 });

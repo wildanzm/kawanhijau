@@ -25,7 +25,7 @@
                                     d="M13 7l5 5m0 0l-5 5m5-5H6" />
                             </svg>
                         </a>
-                        <a href="{{ route('about') }}"
+                        <a href="#"
                             class="inline-flex items-center justify-center px-8 py-3 text-base font-semibold text-primary-600 bg-white hover:bg-zinc-50 border-2 border-primary-200 rounded-lg transition-all duration-300">
                             Pelajari Lebih Lanjut
                         </a>

@@ -4,6 +4,9 @@ namespace App\Livewire\User;
 
 use App\Models\Category;
 use App\Models\Product as ProductModel;
+use App\Models\Cart;
+use App\Models\CartItem;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Title;
@@ -61,6 +64,49 @@ class Product extends Component
         $this->maxPrice = '';
         $this->sortBy = 'latest';
         $this->resetPage();
+    }
+
+    public function addToCart($productId)
+    {
+        $product = ProductModel::findOrFail($productId);
+        
+        // Get or create cart for the user
+        $cart = Cart::firstOrCreate(
+            ['user_id' => Auth::id()]
+        );
+
+        // Check if product already exists in cart
+        $cartItem = CartItem::where('cart_id', $cart->id)
+            ->where('product_id', $productId)
+            ->first();
+
+        if ($cartItem) {
+            // Update quantity if product already in cart
+            $newQuantity = $cartItem->quantity + 1;
+            
+            // Check stock availability
+            if ($newQuantity > $product->stock) {
+                $this->dispatch('cart-error', [
+                    'message' => 'Stok tidak mencukupi!',
+                ]);
+                return;
+            }
+            
+            $cartItem->update(['quantity' => $newQuantity]);
+        } else {
+            // Add new item to cart
+            CartItem::create([
+                'cart_id' => $cart->id,
+                'product_id' => $productId,
+                'quantity' => 1,
+            ]);
+        }
+
+        // Dispatch success event
+        $this->dispatch('cart-updated', [
+            'product_name' => $product->name,
+            'product_id' => $productId,
+        ]);
     }
 
     public function render()

@@ -142,7 +142,7 @@
                 @if ($products->count() > 0)
                     <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
                         @foreach ($products as $product)
-                            <a href="#"
+                            <a href="{{ route('product.detail', $product->id) }}"
                                 class="bg-white rounded-lg shadow-sm border border-zinc-200 overflow-hidden hover:shadow-lg hover:border-primary-300 transition-all duration-300 group">
                                 <!-- Product Image -->
                                 <div class="aspect-square bg-zinc-100 overflow-hidden relative">
@@ -199,7 +199,7 @@
 
                                 <!-- Add to Cart Button -->
                                 <div class="px-3 pb-3">
-                                    <button
+                                    <button wire:click.prevent="addToCart({{ $product->id }})"
                                         class="w-full py-2 px-4 bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center space-x-2">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
@@ -242,4 +242,32 @@
             </main>
         </div>
     </div>
+
+    @script
+        <script>
+            $wire.on('cart-updated', (data) => {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: data[0].product_name + ' berhasil ditambahkan ke keranjang!',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                });
+            });
+
+            $wire.on('cart-error', (data) => {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    title: data[0].message,
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                });
+            });
+        </script>
+    @endscript
 </div>

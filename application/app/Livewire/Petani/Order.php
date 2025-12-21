@@ -67,6 +67,33 @@ class Order extends Component
         $this->myOrderItems = [];
     }
 
+    public function updateOrderStatus($orderId, $newStatus)
+    {
+        $order = OrderModel::findOrFail($orderId);
+        
+        // Validate status transition
+        $allowedTransitions = [
+            'paid' => 'shipping',
+            'shipping' => 'completed',
+        ];
+
+        if (!isset($allowedTransitions[$order->status]) || $allowedTransitions[$order->status] !== $newStatus) {
+            $this->dispatch('status-error', ['message' => 'Transisi status tidak valid']);
+            return;
+        }
+
+        $order->update(['status' => $newStatus]);
+        
+        $statusLabel = [
+            'shipping' => 'Dikirim',
+            'completed' => 'Selesai',
+        ];
+
+        $this->dispatch('status-updated', [
+            'message' => 'Status pesanan berhasil diubah menjadi ' . $statusLabel[$newStatus]
+        ]);
+    }
+
     public function render()
     {
         $petaniProfile = Auth::user()->petaniProfile;

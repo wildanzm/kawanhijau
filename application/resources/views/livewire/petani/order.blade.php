@@ -203,6 +203,16 @@ $farmerSubtotal = $farmerItems->sum('subtotal');
                                         </svg>
                                         {{ $order->status === 'completed' ? 'Selesai' : 'Lunas' }}
                                     </span>
+                                @elseif($order->status === 'shipping')
+                                    <span
+                                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor"
+                                            viewBox="0 0 20 20">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                                        </svg>
+                                        Dikirim
+                                    </span>
                                 @elseif($order->status === 'pending')
                                     <span
                                         class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
@@ -230,16 +240,41 @@ $farmerSubtotal = $farmerItems->sum('subtotal');
                                 {{ $order->created_at->translatedFormat('d M Y') }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right">
-                                <button wire:click="openViewModal({{ $order->id }})"
-                                    class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                                    title="Lihat Detail">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    </svg>
-                                </button>
+                                <div class="flex items-center justify-end space-x-2">
+                                    <button wire:click="openViewModal({{ $order->id }})"
+                                        class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                        title="Lihat Detail">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                    </button>
+
+                                    @if ($order->status === 'paid')
+                                        <button onclick="confirmStatusChange({{ $order->id }}, 'shipping')"
+                                            class="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                                            title="Ubah ke Dikirim">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                                            </svg>
+                                        </button>
+                                    @elseif($order->status === 'shipping')
+                                        <button onclick="confirmStatusChange({{ $order->id }}, 'completed')"
+                                            class="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                                            title="Selesaikan Pesanan">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                        </button>
+                                    @endif
+                                </div>
                             </td>
                         </tr>
                     @empty
@@ -281,6 +316,9 @@ $farmerSubtotal = $farmerItems->sum('subtotal');
                                 class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                 {{ $order->status === 'completed' ? 'Selesai' : 'Lunas' }}
                             </span>
+                        @elseif($order->status === 'shipping')
+                            <span
+                                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Dikirim</span>
                         @elseif($order->status === 'pending')
                             <span
                                 class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">Pending</span>
@@ -295,10 +333,32 @@ $farmerSubtotal = $farmerItems->sum('subtotal');
                         <p class="text-sm font-bold text-zinc-900 mt-1">Rp
                             {{ number_format($farmerSubtotal, 0, ',', '.') }}</p>
                     </div>
-                    <button wire:click="openViewModal({{ $order->id }})"
-                        class="w-full px-3 py-2 bg-blue-50 text-blue-600 rounded-lg text-xs font-medium hover:bg-blue-100 transition-colors">
-                        Lihat Detail
-                    </button>
+                    <div class="space-y-2">
+                        <button wire:click="openViewModal({{ $order->id }})"
+                            class="w-full px-3 py-2 bg-blue-50 text-blue-600 rounded-lg text-xs font-medium hover:bg-blue-100 transition-colors">
+                            Lihat Detail
+                        </button>
+
+                        @if ($order->status === 'paid')
+                            <button onclick="confirmStatusChange({{ $order->id }}, 'shipping')"
+                                class="w-full px-3 py-2 bg-green-50 text-green-600 rounded-lg text-xs font-medium hover:bg-green-100 transition-colors flex items-center justify-center space-x-1">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                                </svg>
+                                <span>Ubah ke Dikirim</span>
+                            </button>
+                        @elseif($order->status === 'shipping')
+                            <button onclick="confirmStatusChange({{ $order->id }}, 'completed')"
+                                class="w-full px-3 py-2 bg-purple-50 text-purple-600 rounded-lg text-xs font-medium hover:bg-purple-100 transition-colors flex items-center justify-center space-x-1">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span>Selesaikan Pesanan</span>
+                            </button>
+                        @endif
+                    </div>
                 </div>
             @empty
                 <div class="p-12 text-center">
@@ -537,4 +597,65 @@ $farmerSubtotal = $farmerItems->sum('subtotal');
             </div>
         </div>
     @endif
+
+    @script
+        <script>
+            window.confirmStatusChange = function(orderId, newStatus) {
+                const statusText = {
+                    'shipping': {
+                        title: 'Ubah Status ke Dikirim?',
+                        text: 'Pesanan akan ditandai sebagai sedang dikirim',
+                        confirmButtonText: 'Ya, Kirim Pesanan',
+                        icon: 'question'
+                    },
+                    'completed': {
+                        title: 'Selesaikan Pesanan?',
+                        text: 'Pesanan akan ditandai sebagai selesai',
+                        confirmButtonText: 'Ya, Selesaikan',
+                        icon: 'question'
+                    }
+                };
+
+                Swal.fire({
+                    title: statusText[newStatus].title,
+                    text: statusText[newStatus].text,
+                    icon: statusText[newStatus].icon,
+                    showCancelButton: true,
+                    confirmButtonColor: '#10b981',
+                    cancelButtonColor: '#6b7280',
+                    confirmButtonText: statusText[newStatus].confirmButtonText,
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        @this.updateOrderStatus(orderId, newStatus);
+                    }
+                });
+            }
+
+            $wire.on('status-updated', (data) => {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: data[0].message,
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                });
+            });
+
+            $wire.on('status-error', (data) => {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    title: data[0].message,
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                });
+            });
+        </script>
+    @endscript
 </div>
