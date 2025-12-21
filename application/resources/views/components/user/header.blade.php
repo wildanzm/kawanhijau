@@ -1,6 +1,10 @@
 @php
-    $cartCount = 0; // TODO: Get actual cart count from session/database
+    $cartCount = 0;
     if (auth()->check()) {
+        $cart = \App\Models\Cart::where('user_id', auth()->id())->first();
+        if ($cart) {
+            $cartCount = $cart->items()->sum('quantity');
+        }
         $firstName = explode(' ', auth()->user()->name)[0];
     }
 @endphp
@@ -50,7 +54,7 @@
                         </svg>
                         @if ($cartCount > 0)
                             <span
-                                class="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-gradient-to-r from-red-500 to-red-600 rounded-full ring-2 ring-white shadow-lg animate-pulse">
+                                class="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full ring-2 ring-white shadow-lg">
                                 {{ $cartCount > 99 ? '99+' : $cartCount }}
                             </span>
                         @endif

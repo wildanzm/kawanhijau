@@ -147,7 +147,7 @@
                         <tr class="hover:bg-zinc-50 transition-colors">
                             <td class="px-6 py-4 text-sm font-semibold text-zinc-700 w-1/3">Status Verifikasi</td>
                             <td class="px-6 py-4">
-                                @if ($petaniProfile->verification_status === 'verified')
+                                @if ($petaniProfile->verification_status === 'approved')
                                     <span
                                         class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                         <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">

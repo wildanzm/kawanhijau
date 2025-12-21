@@ -326,11 +326,6 @@
                                 <span class="font-semibold text-zinc-900">Rp
                                     {{ number_format($this->subtotal, 0, ',', '.') }}</span>
                             </div>
-                            <div class="flex items-center justify-between text-sm">
-                                <span class="text-zinc-600">Biaya Pengiriman</span>
-                                <span class="font-semibold text-zinc-900">Rp
-                                    {{ number_format($this->shippingCost, 0, ',', '.') }}</span>
-                            </div>
                         </div>
 
                         <div class="border-t border-zinc-200 pt-4">

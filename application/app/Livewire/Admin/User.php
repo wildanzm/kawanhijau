@@ -161,10 +161,42 @@ class User extends Component
         $this->deleteUserId = null;
     }
 
+    public function verifyPetani($userId)
+    {
+        $user = ModelUser::findOrFail($userId);
+        
+        if (!$user->hasRole('petani') || !$user->petaniProfile) {
+            session()->flash('error', 'Pengguna bukan petani atau profil tidak ditemukan!');
+            return;
+        }
+
+        $user->petaniProfile->update([
+            'verification_status' => 'approved'
+        ]);
+
+        session()->flash('message', 'Petani berhasil diverifikasi!');
+    }
+
+    public function rejectPetani($userId)
+    {
+        $user = ModelUser::findOrFail($userId);
+        
+        if (!$user->hasRole('petani') || !$user->petaniProfile) {
+            session()->flash('error', 'Pengguna bukan petani atau profil tidak ditemukan!');
+            return;
+        }
+
+        $user->petaniProfile->update([
+            'verification_status' => 'rejected'
+        ]);
+
+        session()->flash('message', 'Verifikasi petani ditolak!');
+    }
+
     public function render()
     {
         // Build base query
-        $query = ModelUser::query();
+        $query = ModelUser::with('petaniProfile');
 
         // Filter by role first
         if ($this->roleFilter === 'user') {

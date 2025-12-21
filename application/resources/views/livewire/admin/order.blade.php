@@ -147,7 +147,14 @@
                             </td>
                             <td class="px-6 py-4">
                                 <div class="text-sm text-zinc-900">
-                                    {{ $order->orderItems->count() }} produk
+                                    @php
+                                        $quantities = $order->orderItems
+                                            ->map(function ($item) {
+                                                return $item->quantity . ' ' . ($item->product->unit ?? 'unit');
+                                            })
+                                            ->join(', ');
+                                    @endphp
+                                    {{ $quantities }}
                                     @if ($order->orderItems->count() > 0)
                                         <span
                                             class="text-xs text-zinc-500 block">{{ Str::limit($order->orderItems->first()->product->name, 30) }}{{ $order->orderItems->count() > 1 ? ' +' . ($order->orderItems->count() - 1) . ' lainnya' : '' }}</span>
@@ -174,17 +181,7 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                @if ($order->status === 'paid' || $order->status === 'completed')
-                                    <span
-                                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd"
-                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                        Lunas
-                                    </span>
-                                @elseif($order->status === 'pending')
+                                @if ($order->status === 'pending')
                                     <span
                                         class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
                                         <svg class="w-3 h-3 mr-1 animate-pulse" fill="currentColor"
@@ -194,6 +191,37 @@
                                                 clip-rule="evenodd" />
                                         </svg>
                                         Pending
+                                    </span>
+                                @elseif($order->status === 'paid')
+                                    <span
+                                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
+                                            <path fill-rule="evenodd"
+                                                d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                        Sudah Dibayar
+                                    </span>
+                                @elseif($order->status === 'shipping')
+                                    <span
+                                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor"
+                                            viewBox="0 0 20 20">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                                        </svg>
+                                        Sedang Dikirim
+                                    </span>
+                                @elseif($order->status === 'completed')
+                                    <span
+                                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd"
+                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                        Selesai
                                     </span>
                                 @else
                                     <span
@@ -268,12 +296,18 @@
                             <p class="text-xs text-zinc-500 mt-1">
                                 {{ $order->created_at->translatedFormat('d M Y, H:i') }}</p>
                         </div>
-                        @if ($order->status === 'paid' || $order->status === 'completed')
-                            <span
-                                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Lunas</span>
-                        @elseif($order->status === 'pending')
+                        @if ($order->status === 'pending')
                             <span
                                 class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">Pending</span>
+                        @elseif($order->status === 'paid')
+                            <span
+                                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Dibayar</span>
+                        @elseif($order->status === 'shipping')
+                            <span
+                                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">Dikirim</span>
+                        @elseif($order->status === 'completed')
+                            <span
+                                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Selesai</span>
                         @else
                             <span
                                 class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Dibatalkan</span>
@@ -281,7 +315,16 @@
                     </div>
                     <div class="mb-3">
                         <p class="text-sm font-semibold text-zinc-900">{{ $order->user->name }}</p>
-                        <p class="text-xs text-zinc-600">{{ $order->orderItems->count() }} produk</p>
+                        <p class="text-xs text-zinc-600">
+                            @php
+                                $quantities = $order->orderItems
+                                    ->map(function ($item) {
+                                        return $item->quantity . ' ' . ($item->product->unit ?? 'unit');
+                                    })
+                                    ->join(', ');
+                            @endphp
+                            {{ $quantities }}
+                        </p>
                         <p class="text-sm font-bold text-zinc-900 mt-1">Rp
                             {{ number_format($order->total_amount, 0, ',', '.') }}</p>
                     </div>
@@ -370,17 +413,7 @@
                                     </div>
                                     <div class="flex items-center justify-between">
                                         <span class="text-sm text-zinc-600">Status Pembayaran</span>
-                                        @if ($selectedOrder->status === 'paid' || $selectedOrder->status === 'completed')
-                                            <span
-                                                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fill-rule="evenodd"
-                                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                                        clip-rule="evenodd" />
-                                                </svg>
-                                                Lunas
-                                            </span>
-                                        @elseif($selectedOrder->status === 'pending')
+                                        @if ($selectedOrder->status === 'pending')
                                             <span
                                                 class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
                                                 <svg class="w-3 h-3 mr-1 animate-pulse" fill="currentColor"
@@ -390,6 +423,38 @@
                                                         clip-rule="evenodd" />
                                                 </svg>
                                                 Pending
+                                            </span>
+                                        @elseif($selectedOrder->status === 'paid')
+                                            <span
+                                                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
+                                                    <path fill-rule="evenodd"
+                                                        d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"
+                                                        clip-rule="evenodd" />
+                                                </svg>
+                                                Sudah Dibayar
+                                            </span>
+                                        @elseif($selectedOrder->status === 'shipping')
+                                            <span
+                                                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 20 20">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                                                </svg>
+                                                Sedang Dikirim
+                                            </span>
+                                        @elseif($selectedOrder->status === 'completed')
+                                            <span
+                                                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd"
+                                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                        clip-rule="evenodd" />
+                                                </svg>
+                                                Selesai
                                             </span>
                                         @else
                                             <span
@@ -444,10 +509,10 @@
                                                     <p class="text-sm font-medium text-zinc-900">
                                                         {{ $item->product->name }}</p>
                                                     <p class="text-xs text-zinc-500">{{ $item->quantity }} x Rp
-                                                        {{ number_format($item->price, 0, ',', '.') }}</p>
+                                                        {{ number_format($item->unit_price, 0, ',', '.') }}</p>
                                                 </div>
                                                 <p class="text-sm font-bold text-zinc-900">Rp
-                                                    {{ number_format($item->quantity * $item->price, 0, ',', '.') }}
+                                                    {{ number_format($item->subtotal, 0, ',', '.') }}
                                                 </p>
                                             </div>
                                         @endforeach
@@ -469,10 +534,11 @@
                                     <div class="space-y-4">
                                         <!-- Payment Image -->
                                         <div class="relative group">
-                                            <img src="{{ Storage::url($paymentProof->proof_image) }}"
+                                            <img src="{{ asset('storage/' . $paymentProof->image_path) }}"
                                                 alt="Bukti Pembayaran"
                                                 class="w-full rounded-xl border-2 border-zinc-200 shadow-md">
-                                            <a href="{{ Storage::url($paymentProof->proof_image) }}" target="_blank"
+                                            <a href="{{ asset('storage/' . $paymentProof->image_path) }}"
+                                                target="_blank"
                                                 class="absolute inset-0 bg-zinc-900/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center">
                                                 <span
                                                     class="px-4 py-2 bg-white rounded-lg text-sm font-medium text-zinc-900">Buka
@@ -483,33 +549,35 @@
                                         <!-- Payment Info -->
                                         <div class="bg-zinc-50 rounded-xl p-4 space-y-2">
                                             <div class="flex items-center justify-between text-sm">
-                                                <span class="text-zinc-600">Nama Pengirim</span>
+                                                <span class="text-zinc-600">Order ID</span>
                                                 <span
-                                                    class="font-medium text-zinc-900">{{ $paymentProof->sender_name }}</span>
+                                                    class="font-medium text-zinc-900">#{{ $paymentProof->order_id }}</span>
                                             </div>
                                             <div class="flex items-center justify-between text-sm">
-                                                <span class="text-zinc-600">Bank</span>
-                                                <span
-                                                    class="font-medium text-zinc-900 uppercase">{{ $paymentProof->bank_name }}</span>
-                                            </div>
-                                            <div class="flex items-center justify-between text-sm">
-                                                <span class="text-zinc-600">Jumlah Transfer</span>
-                                                <span class="font-bold text-zinc-900">Rp
-                                                    {{ number_format($paymentProof->amount, 0, ',', '.') }}</span>
+                                                <span class="text-zinc-600">Status Verifikasi</span>
+                                                @if ($paymentProof->is_verified)
+                                                    <span
+                                                        class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                        <svg class="w-3 h-3 mr-1" fill="currentColor"
+                                                            viewBox="0 0 20 20">
+                                                            <path fill-rule="evenodd"
+                                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                                clip-rule="evenodd" />
+                                                        </svg>
+                                                        Terverifikasi
+                                                    </span>
+                                                @else
+                                                    <span
+                                                        class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                                                        Belum Diverifikasi
+                                                    </span>
+                                                @endif
                                             </div>
                                             <div class="flex items-center justify-between text-sm">
                                                 <span class="text-zinc-600">Waktu Upload</span>
                                                 <span
                                                     class="text-zinc-900">{{ $paymentProof->created_at->translatedFormat('d M Y, H:i') }}</span>
                                             </div>
-                                            @if ($paymentProof->verified_at)
-                                                <div
-                                                    class="flex items-center justify-between text-sm pt-2 border-t border-zinc-200">
-                                                    <span class="text-zinc-600">Diverifikasi</span>
-                                                    <span
-                                                        class="text-green-600 font-medium">{{ $paymentProof->verified_at->translatedFormat('d M Y, H:i') }}</span>
-                                                </div>
-                                            @endif
                                         </div>
                                     </div>
                                 @else

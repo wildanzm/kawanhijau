@@ -228,7 +228,15 @@
                             </th>
                             <th
                                 class="px-6 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider">
+                                Status Verifikasi
+                            </th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider">
                                 Bergabung
+                            </th>
+                            <th
+                                class="px-6 py-3 text-right text-xs font-semibold text-zinc-600 uppercase tracking-wider">
+                                Aksi
                             </th>
                         </tr>
                     </thead>
@@ -248,8 +256,72 @@
                                         Aktif
                                     </span>
                                 </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @if ($farmer->petaniProfile)
+                                        @if ($farmer->petaniProfile->verification_status === 'approved')
+                                            <span
+                                                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd"
+                                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                        clip-rule="evenodd" />
+                                                </svg>
+                                                Terverifikasi
+                                            </span>
+                                        @elseif($farmer->petaniProfile->verification_status === 'pending')
+                                            <span
+                                                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                                                <svg class="w-3 h-3 mr-1 animate-pulse" fill="currentColor"
+                                                    viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd"
+                                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                                                        clip-rule="evenodd" />
+                                                </svg>
+                                                Menunggu
+                                            </span>
+                                        @else
+                                            <span
+                                                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd"
+                                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                                        clip-rule="evenodd" />
+                                                </svg>
+                                                Ditolak
+                                            </span>
+                                        @endif
+                                    @else
+                                        <span class="text-xs text-zinc-400">-</span>
+                                    @endif
+                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-600">
                                     {{ $farmer->created_at->translatedFormat('d F Y') }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <div class="flex items-center justify-end space-x-2">
+                                        @if ($farmer->petaniProfile && $farmer->petaniProfile->verification_status === 'pending')
+                                            <button wire:click="verifyPetani({{ $farmer->id }})"
+                                                class="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                                                title="Verifikasi">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                            </button>
+                                            <button wire:click="rejectPetani({{ $farmer->id }})"
+                                                class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                                title="Tolak">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                            </button>
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                         @empty
@@ -284,9 +356,67 @@
                                 Aktif
                             </span>
                         </div>
+                        <div class="mb-3">
+                            @if ($farmer->petaniProfile)
+                                <div class="flex items-center justify-between text-xs mb-2">
+                                    <span class="text-zinc-600">Status Verifikasi:</span>
+                                    @if ($farmer->petaniProfile->verification_status === 'approved')
+                                        <span
+                                            class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd"
+                                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                            Terverifikasi
+                                        </span>
+                                    @elseif($farmer->petaniProfile->verification_status === 'pending')
+                                        <span
+                                            class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd"
+                                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                            Menunggu
+                                        </span>
+                                    @else
+                                        <span
+                                            class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd"
+                                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                            Ditolak
+                                        </span>
+                                    @endif
+                                </div>
+                            @endif
+                        </div>
                         <div class="flex items-center justify-between text-xs text-zinc-500 mb-3">
                             <span>Bergabung: {{ $farmer->created_at->translatedFormat('d F Y') }}</span>
                         </div>
+                        @if ($farmer->petaniProfile && $farmer->petaniProfile->verification_status === 'pending')
+                            <div class="flex items-center space-x-2">
+                                <button wire:click="verifyPetani({{ $farmer->id }})"
+                                    class="flex-1 px-3 py-2 bg-green-50 text-green-600 rounded-lg text-xs font-medium hover:bg-green-100 transition-colors flex items-center justify-center space-x-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span>Verifikasi</span>
+                                </button>
+                                <button wire:click="rejectPetani({{ $farmer->id }})"
+                                    class="flex-1 px-3 py-2 bg-red-50 text-red-600 rounded-lg text-xs font-medium hover:bg-red-100 transition-colors flex items-center justify-center space-x-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span>Tolak</span>
+                                </button>
+                            </div>
+                        @endif
                     </div>
                 @empty
                     <div class="p-12 text-center">

@@ -57,7 +57,7 @@ class Dashboard extends Component
                     $query->where('petani_profile_id', $petaniProfile->id);
                 })
                 ->whereHas('order', function($query) {
-                    $query->where('status', 'paid')
+                    $query->where('status', 'completed')
                           ->whereMonth('created_at', now()->month)
                           ->whereYear('created_at', now()->year);
                 })

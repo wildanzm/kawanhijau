@@ -3,7 +3,7 @@
     <div class="mb-6">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-zinc-900">Dashboard Petani</h1>
+                <h1 class="text-2xl font-bold text-zinc-900">Dashboard</h1>
                 <p class="text-sm text-zinc-600 mt-1">
                     Selamat datang, <span class="font-semibold">{{ Auth::user()->name }}</span>!
                     @if ($petaniProfile)

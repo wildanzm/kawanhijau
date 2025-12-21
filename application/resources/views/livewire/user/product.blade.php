@@ -63,22 +63,13 @@
                     <div>
                         <label class="block text-sm font-semibold text-zinc-700 mb-3">Kategori</label>
                         <div class="space-y-2 max-h-64 overflow-y-auto">
-                            <label
-                                class="flex items-center justify-between p-2 rounded-lg hover:bg-zinc-50 cursor-pointer transition-colors">
-                                <div class="flex items-center">
-                                    <input type="radio" wire:model.live="selectedCategory" value=""
-                                        class="w-4 h-4 text-primary-600 border-zinc-300 focus:ring-primary-500">
-                                    <span class="ml-3 text-sm text-zinc-700">Semua Kategori</span>
-                                </div>
-                                <span class="text-xs text-zinc-500 font-medium">{{ $products->total() }}</span>
-                            </label>
                             @foreach ($categories as $category)
                                 <label
                                     class="flex items-center justify-between p-2 rounded-lg hover:bg-zinc-50 cursor-pointer transition-colors">
                                     <div class="flex items-center">
-                                        <input type="radio" wire:model.live="selectedCategory"
+                                        <input type="checkbox" wire:model.live="selectedCategory"
                                             value="{{ $category->id }}"
-                                            class="w-4 h-4 text-primary-600 border-zinc-300 focus:ring-primary-500">
+                                            class="w-4 h-4 text-primary-600 border-zinc-300 rounded focus:ring-primary-500">
                                         <span class="ml-3 text-sm text-zinc-700">{{ $category->name }}</span>
                                     </div>
                                     <span

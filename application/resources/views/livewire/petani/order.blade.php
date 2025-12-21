@@ -54,9 +54,8 @@
     <div class="bg-gradient-to-r from-primary-500 to-secondary-500 rounded-xl shadow-lg p-6 mb-6 text-white">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm opacity-90 mb-1">Total Pendapatan (Lunas)</p>
+                <p class="text-sm opacity-90 mb-1">Total Pendapatan</p>
                 <p class="text-3xl font-bold">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</p>
-                <p class="text-xs opacity-80 mt-2">Dari semua pesanan yang sudah dibayar</p>
             </div>
             <div class="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center">
                 <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -177,7 +176,8 @@ $farmerSubtotal = $farmerItems->sum('subtotal');
                                 <div class="flex flex-col space-y-1">
                                     @foreach ($farmerItems->take(2) as $item)
                                         <span class="text-xs text-zinc-700">
-                                            {{ $item->quantity }}x {{ $item->product->name }}
+                                            {{ $item->quantity }} {{ $item->product->unit ?? 'unit' }}
+                                            {{ $item->product->name }}
                                         </span>
                                     @endforeach
                                     @if ($farmerItems->count() > 2)
@@ -190,7 +190,8 @@ $farmerSubtotal = $farmerItems->sum('subtotal');
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <p class="text-sm font-bold text-zinc-900">Rp
                                     {{ number_format($farmerSubtotal, 0, ',', '.') }}</p>
-                                <p class="text-xs text-zinc-500">dari {{ $farmerItems->count() }} item</p>
+                                <p class="text-xs text-zinc-500">dari {{ $farmerItems->count() }}
+                                    {{ $item->product->unit ?? 'unit' }}</p>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @if ($order->status === 'paid' || $order->status === 'completed')
@@ -257,10 +258,13 @@ $farmerSubtotal = $farmerItems->sum('subtotal');
                                         <button onclick="confirmStatusChange({{ $order->id }}, 'shipping')"
                                             class="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                                             title="Ubah ke Dikirim">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                                <path fill-rule="evenodd"
+                                                    d="M9.126.64a1.75 1.75 0 011.75 0l8.25 4.762c.103.06.199.128.286.206a.748.748 0 01.554.96c.023.113.035.23.035.35v3.332a.75.75 0 01-1.5 0V7.64l-7.75 4.474V22.36a.75.75 0 01-1.125.65l-8.75-5.052a1.75 1.75 0 01-.875-1.515V6.917c0-.119.012-.236.035-.35a.748.748 0 01.554-.96 1.75 1.75 0 01.286-.205L9.126.639zM1.501 7.638v8.803c0 .09.048.172.125.216l7.625 4.402v-8.947l-7.75-4.474zm8.5 3.175L2.251 6.34l7.625-4.402a.25.25 0 01.25 0l7.625 4.402-7.75 4.474z">
+                                                </path>
+                                                <path
+                                                    d="M21.347 17.5l-2.894-2.702a.75.75 0 111.023-1.096l4.286 4a.75.75 0 010 1.096l-4.286 4a.75.75 0 11-1.023-1.096L21.347 19h-6.633a.75.75 0 010-1.5h6.633z">
+                                                </path>
                                             </svg>
                                         </button>
                                     @elseif($order->status === 'shipping')
@@ -342,9 +346,13 @@ $farmerSubtotal = $farmerItems->sum('subtotal');
                         @if ($order->status === 'paid')
                             <button onclick="confirmStatusChange({{ $order->id }}, 'shipping')"
                                 class="w-full px-3 py-2 bg-green-50 text-green-600 rounded-lg text-xs font-medium hover:bg-green-100 transition-colors flex items-center justify-center space-x-1">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path fill-rule="evenodd"
+                                        d="M9.126.64a1.75 1.75 0 011.75 0l8.25 4.762c.103.06.199.128.286.206a.748.748 0 01.554.96c.023.113.035.23.035.35v3.332a.75.75 0 01-1.5 0V7.64l-7.75 4.474V22.36a.75.75 0 01-1.125.65l-8.75-5.052a1.75 1.75 0 01-.875-1.515V6.917c0-.119.012-.236.035-.35a.748.748 0 01.554-.96 1.75 1.75 0 01.286-.205L9.126.639zM1.501 7.638v8.803c0 .09.048.172.125.216l7.625 4.402v-8.947l-7.75-4.474zm8.5 3.175L2.251 6.34l7.625-4.402a.25.25 0 01.25 0l7.625 4.402-7.75 4.474z">
+                                    </path>
+                                    <path
+                                        d="M21.347 17.5l-2.894-2.702a.75.75 0 111.023-1.096l4.286 4a.75.75 0 010 1.096l-4.286 4a.75.75 0 11-1.023-1.096L21.347 19h-6.633a.75.75 0 010-1.5h6.633z">
+                                    </path>
                                 </svg>
                                 <span>Ubah ke Dikirim</span>
                             </button>
@@ -538,7 +546,8 @@ $farmerSubtotal = $farmerItems->sum('subtotal');
                                                     {{ $item->product->category->name ?? 'Kategori tidak tersedia' }}
                                                 </p>
                                                 <div class="flex items-center justify-between">
-                                                    <span class="text-xs text-zinc-600">{{ $item->quantity }} x Rp
+                                                    <span class="text-xs text-zinc-600">{{ $item->quantity }}
+                                                        {{ $item->product->unit ?? 'unit' }} x Rp
                                                         {{ number_format($item->unit_price, 0, ',', '.') }}</span>
                                                     <span class="text-sm font-bold text-zinc-900">Rp
                                                         {{ number_format($item->subtotal, 0, ',', '.') }}</span>

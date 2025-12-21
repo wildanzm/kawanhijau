@@ -19,7 +19,7 @@ class Product extends Component
     use WithPagination;
 
     public $search = '';
-    public $selectedCategory = '';
+    public $selectedCategory = [];
     public $minPrice = '';
     public $maxPrice = '';
     public $sortBy = 'latest';
@@ -27,7 +27,7 @@ class Product extends Component
 
     protected $queryString = [
         'search' => ['except' => ''],
-        'selectedCategory' => ['except' => ''],
+        'selectedCategory' => ['except' => []],
         'sortBy' => ['except' => 'latest'],
     ];
 
@@ -59,7 +59,7 @@ class Product extends Component
     public function resetFilters()
     {
         $this->search = '';
-        $this->selectedCategory = '';
+        $this->selectedCategory = [];
         $this->minPrice = '';
         $this->maxPrice = '';
         $this->sortBy = 'latest';
@@ -124,8 +124,8 @@ class Product extends Component
         }
 
         // Category Filter
-        if ($this->selectedCategory) {
-            $query->where('category_id', $this->selectedCategory);
+        if (!empty($this->selectedCategory)) {
+            $query->whereIn('category_id', $this->selectedCategory);
         }
 
         // Price Range Filter

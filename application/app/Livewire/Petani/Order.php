@@ -149,7 +149,7 @@ class Order extends Component
                 $q->where('petani_profile_id', $petaniProfile->id ?? 0);
             })->count();
 
-        $completedOrders = OrderModel::whereIn('status', ['paid', 'completed'])
+        $completedOrders = OrderModel::whereIn('status', ['completed'])
             ->whereHas('orderItems.product', function($q) use ($petaniProfile) {
                 $q->where('petani_profile_id', $petaniProfile->id ?? 0);
             })->count();
@@ -159,7 +159,7 @@ class Order extends Component
                 $q->where('petani_profile_id', $petaniProfile->id ?? 0);
             })
             ->whereHas('order', function($q) {
-                $q->where('status', 'paid');
+                $q->where('status', 'completed');
             })
             ->sum('subtotal');
 

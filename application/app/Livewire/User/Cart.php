@@ -41,7 +41,11 @@ class Cart extends Component
     {
         $cart = $this->getUserCart();
         if ($cart) {
-            $this->selectAll = count($this->selectedItems) === $cart->items->count();
+            $totalItems = $cart->items->count();
+            $selectedCount = count($this->selectedItems);
+            $this->selectAll = $totalItems > 0 && $selectedCount === $totalItems;
+        } else {
+            $this->selectAll = false;
         }
     }
 

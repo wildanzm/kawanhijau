@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained(); // Pembeli
             $table->string('invoice_number')->unique();
             $table->decimal('total_amount', 12, 2);
-            $table->enum('status', ['pending', 'waiting_payment', 'paid', 'shipping', 'completed', 'cancelled'])->default('pending');
+            $table->enum('status', ['pending', 'paid', 'shipping', 'completed', 'cancelled'])->default('pending');
             $table->text('shipping_address');
             $table->timestamps();
         });

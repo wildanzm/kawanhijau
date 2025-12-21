@@ -60,15 +60,10 @@ class Checkout extends Component
         });
     }
 
-    public function getShippingCostProperty()
-    {
-        // Flat shipping cost for now
-        return 15000;
-    }
 
     public function getTotalProperty()
     {
-        return $this->subtotal + $this->shippingCost;
+        return $this->subtotal;
     }
 
     public function processCheckout()
@@ -118,7 +113,7 @@ class Checkout extends Component
                 'user_id' => Auth::id(),
                 'invoice_number' => 'INV-' . strtoupper(uniqid()),
                 'total_amount' => $this->total,
-                'status' => 'paid',
+                'status' => 'pending',
                 'shipping_address' => $shippingAddress,
             ]);
 

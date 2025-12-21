@@ -107,18 +107,6 @@ class Detail extends Component
         $this->quantity = 1;
     }
 
-    public function buyNow()
-    {
-        $this->validate([
-            'quantity' => 'required|integer|min:1|max:' . $this->product->stock,
-        ]);
-
-        // Buy now logic - redirect to checkout
-        $this->dispatch('buy-now', [
-            'product_id' => $this->product->id,
-            'quantity' => $this->quantity,
-        ]);
-    }
 
     public function render()
     {

@@ -183,7 +183,16 @@
                                                 {{ $order->orderItems->count() }} Produk
                                             </p>
                                             <p class="text-xs text-zinc-500">
-                                                {{ $order->orderItems->sum('quantity') }} Item
+                                                @php
+                                                    $quantities = $order->orderItems
+                                                        ->map(function ($item) {
+                                                            return $item->quantity .
+                                                                ' ' .
+                                                                ($item->product->unit ?? 'unit');
+                                                        })
+                                                        ->join(', ');
+                                                @endphp
+                                                {{ $quantities }}
                                             </p>
                                         </div>
                                     </div>
@@ -346,7 +355,16 @@
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm font-medium text-zinc-900">{{ $order->orderItems->count() }} Produk
                                 </p>
-                                <p class="text-xs text-zinc-500">{{ $order->orderItems->sum('quantity') }} Item</p>
+                                <p class="text-xs text-zinc-500">
+                                    @php
+                                        $quantities = $order->orderItems
+                                            ->map(function ($item) {
+                                                return $item->quantity . ' ' . ($item->product->unit ?? 'unit');
+                                            })
+                                            ->join(', ');
+                                    @endphp
+                                    {{ $quantities }}
+                                </p>
                             </div>
                         </div>
                         <div class="flex items-center justify-between">

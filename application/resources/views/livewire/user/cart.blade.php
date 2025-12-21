@@ -18,32 +18,10 @@
                 <div class="flex flex-col lg:flex-row gap-6">
                     <!-- Left - Cart Items -->
                     <div class="flex-1 space-y-4">
-                        <!-- Header Card -->
-                        <div class="bg-white rounded-lg shadow-sm border border-zinc-200 p-4">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-3">
-                                    <input type="checkbox" wire:model.live="selectAll"
-                                        class="w-5 h-5 text-primary-600 border-zinc-300 rounded focus:ring-primary-500">
-                                    <span class="font-semibold text-zinc-900">Pilih Semua ({{ $cart->items->count() }}
-                                        Produk)</span>
-                                </div>
-                                @if (count($selectedItems) > 0)
-                                    <button wire:click="removeSelected" wire:confirm="Hapus produk terpilih dari keranjang?"
-                                        class="text-sm font-medium text-red-600 hover:text-red-700 transition-colors flex items-center space-x-1">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                        <span>Hapus ({{ count($selectedItems) }})</span>
-                                    </button>
-                                @endif
-                            </div>
-                        </div>
-
                         <!-- Cart Items -->
                         @foreach ($cart->items as $item)
                             <div class="bg-white rounded-lg shadow-sm border border-zinc-200 p-4 hover:shadow-md transition-shadow"
-                                wire:key="cart-item-{{ $item->id }}">
+                                wire:key="cart-item-{{ $item->id }}-{{ $item->quantity }}">
                                 <div class="flex items-start space-x-4">
                                     <!-- Checkbox -->
                                     <div class="flex-shrink-0 pt-1">
@@ -104,8 +82,7 @@
                                             </div>
 
                                             <!-- Delete Button - Desktop -->
-                                            <button wire:click="removeItem({{ $item->id }})"
-                                                wire:confirm="Hapus produk ini dari keranjang?"
+                                            <button onclick="confirmDeleteItem({{ $item->id }})"
                                                 class="hidden sm:block text-zinc-400 hover:text-red-600 transition-colors p-2">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
@@ -129,11 +106,10 @@
                                                             stroke-width="2" d="M20 12H4" />
                                                     </svg>
                                                 </button>
-                                                <input type="number"
-                                                    wire:change="updateQuantity({{ $item->id }}, $event.target.value)"
-                                                    value="{{ $item->quantity }}" min="1"
-                                                    max="{{ $item->product->stock }}"
-                                                    class="w-16 text-center py-1.5 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                                                <div
+                                                    class="w-16 text-center py-1.5 border border-zinc-300 rounded-lg font-semibold text-zinc-900">
+                                                    {{ $item->quantity }}
+                                                </div>
                                                 <button
                                                     wire:click="updateQuantity({{ $item->id }}, {{ $item->quantity + 1 }})"
                                                     @if ($item->quantity >= $item->product->stock) disabled @endif
@@ -149,8 +125,7 @@
                                             </div>
 
                                             <!-- Delete Button - Mobile -->
-                                            <button wire:click="removeItem({{ $item->id }})"
-                                                wire:confirm="Hapus produk ini dari keranjang?"
+                                            <button onclick="confirmDeleteItem({{ $item->id }})"
                                                 class="sm:hidden text-red-600 hover:text-red-700 transition-colors text-sm font-medium flex items-center space-x-1">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
@@ -284,6 +259,44 @@
 
     @script
         <script>
+            // Confirm delete single item
+            window.confirmDeleteItem = function(itemId) {
+                Swal.fire({
+                    title: 'Hapus Produk?',
+                    text: 'Produk akan dihapus dari keranjang',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#6b7280',
+                    confirmButtonText: 'Ya, Hapus',
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $wire.removeItem(itemId);
+                    }
+                });
+            }
+
+            // Confirm delete selected items
+            window.confirmDeleteSelected = function() {
+                Swal.fire({
+                    title: 'Hapus Produk Terpilih?',
+                    text: 'Semua produk yang dipilih akan dihapus dari keranjang',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#6b7280',
+                    confirmButtonText: 'Ya, Hapus Semua',
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $wire.removeSelected();
+                    }
+                });
+            }
+
             // Listen for cart-updated event
             $wire.on('cart-updated', () => {
                 // Refresh the component
