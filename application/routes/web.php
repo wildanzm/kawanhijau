@@ -5,9 +5,10 @@ use App\Livewire\User\Home;
 use App\Livewire\Admin\User;
 use App\Livewire\User\Order;
 use App\Livewire\User\Product;
-use App\Livewire\User\Product\Detail as DetailProduct;
 use App\Livewire\User\Profile;
+use App\Livewire\User\Checkout;
 use App\Livewire\Admin\Category;
+use App\Livewire\Petani\KawanHijauAI;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\Order as OrderAdmin;
 use App\Livewire\Petani\Sale as SalePetani;
@@ -19,7 +20,7 @@ use App\Livewire\Petani\Profile as ProfilePetani;
 use App\Livewire\Petani\Setting as SettingPetani;
 use App\Livewire\Admin\Dashboard as DashboardAdmin;
 use App\Livewire\Petani\Dashboard as DashboardPetani;
-use App\Livewire\User\Checkout;
+use App\Livewire\User\Product\Detail as DetailProduct;
 
 // Public Routes
 Route::get('/', Home::class)->name('home');
@@ -49,9 +50,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 // Petani Routes
 Route::middleware(['auth', 'role:petani'])->prefix('petani')->name('petani.')->group(function () {
     Route::get('/dashboard', DashboardPetani::class)->name('dashboard');
-    Route::get('products', ProductPetani::class)->name('products');
-    Route::get('orders', OrderPetani::class)->name('orders');
-    Route::get('sales', SalePetani::class)->name('sales');
-    Route::get('profile', ProfilePetani::class)->name('profile');
-    Route::get('settings', SettingPetani::class)->name('settings');
+    Route::get('/products', ProductPetani::class)->name('products');
+    Route::get('/orders', OrderPetani::class)->name('orders');
+    Route::get('/sales', SalePetani::class)->name('sales');
+    Route::get('/kawanhijau-ai',KawanHijauAI::class)->name('kawanhijau-ai');
+    Route::get('/profile', ProfilePetani::class)->name('profile');
+    Route::get('/settings', SettingPetani::class)->name('settings');
 });

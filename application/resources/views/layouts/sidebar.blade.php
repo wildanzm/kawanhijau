@@ -36,6 +36,8 @@
             $activeMenu = 'reports';
         } elseif (str_contains($routeName, 'sales')) {
             $activeMenu = 'sales';
+        } elseif (str_contains($routeName, 'kawanhijau-ai')) {
+            $activeMenu = 'kawanhijau-ai';
         } elseif (str_contains($routeName, 'profile')) {
             $activeMenu = 'profile';
         } elseif (str_contains($routeName, 'settings')) {
@@ -228,6 +230,16 @@
                                 d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <span class="font-medium text-sm">Penjualan</span>
+                    </a>
+
+                    <a href="{{ route('petani.kawanhijau-ai') }}"
+                        class="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group {{ $activeMenu === 'kawanhijau-ai' ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-md' : 'text-zinc-700 hover:bg-zinc-100' }}">
+                        <svg class="w-5 h-5 {{ $activeMenu === 'kawanhijau-ai' ? 'text-white' : 'text-zinc-600 group-hover:text-primary-600' }}"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                        </svg>
+                        <span class="font-medium text-sm">KawanHijau AI</span>
                     </a>
 
                     <a href="{{ route('petani.profile') }}"
