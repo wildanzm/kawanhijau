@@ -17,43 +17,128 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                 </svg>
-                Upload Gambar untuk Deteksi Hama
+                Deteksi Hama dengan AI
             </h2>
-            <p class="text-sm text-green-50 mt-1">Unggah foto tanaman yang terindikasi hama untuk dianalisis</p>
+            <p class="text-sm text-green-50 mt-1">Pilih cara untuk menambahkan gambar tanaman</p>
         </div>
 
         <div class="p-6">
+            <!-- Tab Navigation -->
+            <div class="flex space-x-2 mb-6 bg-zinc-100 p-1 rounded-lg">
+                <button wire:click="$set('activeTab', 'upload')" type="button"
+                    class="flex-1 px-4 py-2.5 rounded-md text-sm font-semibold transition-all duration-200 flex items-center justify-center space-x-2 {{ $activeTab === 'upload' ? 'bg-white text-green-600 shadow-sm' : 'text-zinc-600 hover:text-zinc-900' }}">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <span>Upload File</span>
+                </button>
+                <button wire:click="$set('activeTab', 'camera')" type="button"
+                    class="flex-1 px-4 py-2.5 rounded-md text-sm font-semibold transition-all duration-200 flex items-center justify-center space-x-2 {{ $activeTab === 'camera' ? 'bg-white text-green-600 shadow-sm' : 'text-zinc-600 hover:text-zinc-900' }}">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span>Ambil Foto</span>
+                </button>
+            </div>
+
             <form wire:submit.prevent="detectPest">
                 <div class="space-y-4">
-                    <!-- Image Upload Area -->
-                    <div>
-                        <label class="block text-sm font-semibold text-zinc-700 mb-2">Pilih Gambar</label>
-                        <div class="relative">
-                            <input type="file" wire:model="image" accept="image/*"
-                                class="block w-full text-sm text-zinc-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer border border-zinc-300 rounded-lg"
-                                {{ $isProcessing ? 'disabled' : '' }}>
-                        </div>
-                        @error('image')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-
-                        <!-- Image Preview -->
-                        @if ($image)
-                            <div class="mt-4">
-                                <p class="text-sm font-medium text-zinc-700 mb-2">Preview:</p>
-                                <div class="relative inline-block">
-                                    <img src="{{ $image->temporaryUrl() }}" alt="Preview"
-                                        class="max-h-64 rounded-lg border-2 border-zinc-200 shadow-md">
-                                </div>
+                    <!-- Upload Tab Content -->
+                    <div x-show="$wire.activeTab === 'upload'" x-cloak>
+                        <div>
+                            <label class="block text-sm font-semibold text-zinc-700 mb-2">Pilih Gambar</label>
+                            <div class="relative">
+                                <input type="file" wire:model="image" accept="image/*"
+                                    class="block w-full text-sm text-zinc-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 cursor-pointer border border-zinc-300 rounded-lg"
+                                    {{ $isProcessing ? 'disabled' : '' }}>
                             </div>
-                        @endif
+                            @error('image')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+
+                            <!-- Image Preview -->
+                            @if ($image)
+                                <div class="mt-4">
+                                    <p class="text-sm font-medium text-zinc-700 mb-2">Preview:</p>
+                                    <div class="relative inline-block">
+                                        <img src="{{ $image->temporaryUrl() }}" alt="Preview"
+                                            class="max-h-64 rounded-lg border-2 border-zinc-200 shadow-md">
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Camera Tab Content -->
+                    <div x-show="$wire.activeTab === 'camera'" x-cloak x-data="cameraCapture()">
+                        <div class="space-y-4">
+                            @if (!$capturedImage)
+                                <!-- Camera View -->
+                                <div>
+                                    <label class="block text-sm font-semibold text-zinc-700 mb-2">Kamera</label>
+                                    <div class="relative bg-zinc-900 rounded-lg overflow-hidden">
+                                        <video x-ref="video" autoplay playsinline
+                                            class="w-full h-64 sm:h-80 lg:h-96 object-cover"></video>
+                                        <canvas x-ref="canvas" class="hidden"></canvas>
+                                    </div>
+                                    <div class="mt-4 flex justify-center space-x-3">
+                                        <button type="button" @click="startCamera()" x-show="!cameraStarted"
+                                            class="px-6 py-2.5 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors flex items-center space-x-2">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                            </svg>
+                                            <span>Nyalakan Kamera</span>
+                                        </button>
+                                        <button type="button" @click="captureImage()" x-show="cameraStarted"
+                                            class="px-6 py-2.5 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition-colors flex items-center space-x-2">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                            </svg>
+                                            <span>Ambil Gambar</span>
+                                        </button>
+                                        <button type="button" @click="stopCamera()" x-show="cameraStarted"
+                                            class="px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            @else
+                                <!-- Captured Image Preview -->
+                                <div>
+                                    <label class="block text-sm font-semibold text-zinc-700 mb-2">Foto yang
+                                        Diambil:</label>
+                                    <div class="relative inline-block">
+                                        <img src="{{ $capturedImage }}" alt="Captured"
+                                            class="max-h-64 rounded-lg border-2 border-zinc-200 shadow-md">
+                                    </div>
+                                    <div class="mt-3">
+                                        <button type="button" wire:click="clearCapture"
+                                            class="px-4 py-2 bg-zinc-100 text-zinc-700 font-medium rounded-lg hover:bg-zinc-200 transition-colors">
+                                            Ambil Ulang
+                                        </button>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
                     </div>
 
                     <!-- Submit Button -->
-                    <div class="flex items-center space-x-3">
+                    <div class="flex items-center space-x-3 pt-4 border-t border-zinc-200">
                         <button type="submit"
                             class="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-semibold rounded-lg hover:shadow-lg transition-all duration-200 flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                            {{ $isProcessing || !$image ? 'disabled' : '' }}>
+                            {{ $isProcessing || ($activeTab === 'upload' && !$image) || ($activeTab === 'camera' && !$capturedImage) ? 'disabled' : '' }}>
                             @if ($isProcessing)
                                 <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
                                     fill="none" viewBox="0 0 24 24">
@@ -73,8 +158,9 @@
                             @endif
                         </button>
 
-                        @if ($image)
-                            <button type="button" wire:click="$set('image', null)"
+                        @if (($activeTab === 'upload' && $image) || ($activeTab === 'camera' && $capturedImage))
+                            <button type="button"
+                                wire:click="{{ $activeTab === 'upload' ? '$set(\'image\', null)' : 'clearCapture' }}"
                                 class="px-4 py-3 bg-zinc-100 text-zinc-700 font-medium rounded-lg hover:bg-zinc-200 transition-colors">
                                 Batal
                             </button>
@@ -194,6 +280,65 @@
 
 @push('scripts')
     <script>
+        function cameraCapture() {
+            return {
+                cameraStarted: false,
+                stream: null,
+
+                async startCamera() {
+                    try {
+                        this.stream = await navigator.mediaDevices.getUserMedia({
+                            video: {
+                                facingMode: 'environment', // Use back camera on mobile
+                                width: {
+                                    ideal: 1280
+                                },
+                                height: {
+                                    ideal: 720
+                                }
+                            }
+                        });
+                        this.$refs.video.srcObject = this.stream;
+                        this.cameraStarted = true;
+                    } catch (error) {
+                        console.error('Error accessing camera:', error);
+                        alert('Tidak dapat mengakses kamera. Pastikan Anda memberikan izin akses kamera.');
+                    }
+                },
+
+                captureImage() {
+                    const video = this.$refs.video;
+                    const canvas = this.$refs.canvas;
+                    const context = canvas.getContext('2d');
+
+                    // Set canvas size to match video
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+
+                    // Draw video frame to canvas
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                    // Convert to base64
+                    const imageData = canvas.toDataURL('image/png');
+
+                    // Send to Livewire
+                    @this.set('capturedImage', imageData);
+
+                    // Stop camera
+                    this.stopCamera();
+                },
+
+                stopCamera() {
+                    if (this.stream) {
+                        this.stream.getTracks().forEach(track => track.stop());
+                        this.$refs.video.srcObject = null;
+                        this.stream = null;
+                        this.cameraStarted = false;
+                    }
+                }
+            }
+        }
+
         document.addEventListener('livewire:init', () => {
             Livewire.on('detection-success', (event) => {
                 Swal.fire({

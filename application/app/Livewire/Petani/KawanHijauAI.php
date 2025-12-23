@@ -16,30 +16,45 @@ class KawanHijauAI extends Component
     use WithFileUploads;
 
     public $image;
+    public $capturedImage = null;
     public $isProcessing = false;
     public $latestDetection = null;
+    public $activeTab = 'upload'; // 'upload' or 'camera'
 
     public function detectPest()
     {
-        $this->validate([
-            'image' => 'required|image|max:5120', // 5MB Max
-        ], [
-            'image.required' => 'Silakan pilih gambar untuk dideteksi',
-            'image.image' => 'File harus berupa gambar',
-            'image.max' => 'Ukuran gambar maksimal 5MB',
-        ]);
+        // Validate based on active tab
+        if ($this->activeTab === 'upload') {
+            $this->validate([
+                'image' => 'required|image|max:5120', // 5MB Max
+            ], [
+                'image.required' => 'Silakan pilih gambar untuk dideteksi',
+                'image.image' => 'File harus berupa gambar',
+                'image.max' => 'Ukuran gambar maksimal 5MB',
+            ]);
+        } else {
+            if (!$this->capturedImage) {
+                $this->dispatch('detection-error', message: 'Silakan ambil gambar terlebih dahulu');
+                return;
+            }
+        }
 
         $this->isProcessing = true;
 
         try {
             // Save image temporarily for display
-            $imagePath = $this->image->store('temp-detections', 'public');
+            if ($this->activeTab === 'upload') {
+                $imagePath = $this->image->store('temp-detections', 'public');
+            } else {
+                // Handle base64 captured image
+                $imagePath = $this->saveCapturedImage();
+            }
 
             // Send to Flask API
             $response = Http::attach(
                 'image',
                 file_get_contents(storage_path('app/public/' . $imagePath)),
-                $this->image->getClientOriginalName()
+                $this->activeTab === 'upload' ? $this->image->getClientOriginalName() : 'captured.png'
             )->post('http://localhost:5000/api/detect-pest');
 
             if ($response->successful()) {
@@ -79,6 +94,23 @@ class KawanHijauAI extends Component
         }
     }
 
+    protected function saveCapturedImage()
+    {
+        // Decode base64 image
+        $imageData = $this->capturedImage;
+        $imageData = str_replace('data:image/png;base64,', '', $imageData);
+        $imageData = str_replace(' ', '+', $imageData);
+        $decodedImage = base64_decode($imageData);
+        
+        // Generate unique filename
+        $filename = 'temp-detections/' . uniqid() . '.png';
+        
+        // Save to storage
+        Storage::disk('public')->put($filename, $decodedImage);
+        
+        return $filename;
+    }
+
     public function clearResult()
     {
         // Delete temporary image
@@ -89,6 +121,12 @@ class KawanHijauAI extends Component
         }
         
         $this->latestDetection = null;
+        $this->capturedImage = null;
+    }
+
+    public function clearCapture()
+    {
+        $this->capturedImage = null;
     }
 
     public function render()
