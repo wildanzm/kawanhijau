@@ -40,7 +40,7 @@ class ProductSeeder extends Seeder
                     'name' => 'Bayam Hijau',
                     'description' => 'Bayam hijau organik pilihan, kaya zat besi dan vitamin. Cocok untuk sayur bening, pecel, atau tumisan. Dipanen pagi hari untuk kesegaran maksimal.',
                     'price' => 8000,
-                    'unit' => 'ikat',
+                    'unit' => 'pcs',
                     'stock' => 50,
                     'image_path' => 'products/bayam.jpg',
                 ]
@@ -60,7 +60,7 @@ class ProductSeeder extends Seeder
                     'name' => 'Pisang Cavendish',
                     'description' => 'Pisang cavendish manis dan lembut. Kaya potasium dan energi. Cocok untuk buah meja, smoothie, atau banana bread. Tingkat kematangan dapat disesuaikan.',
                     'price' => 20000,
-                    'unit' => 'sisir',
+                    'unit' => 'kg',
                     'stock' => 30,
                     'image_path' => 'products/pisang.jpg',
                 ],
